@@ -8,9 +8,14 @@ Notifications ride Rock's existing **Send Following Events** job and its daily d
 
 ## Install
 
+Install **Cairn** from the Rock Shop (Admin Tools > Rock Shop) like any other plugin; Rock restarts and everything below happens automatically.
+
+Installing outside the shop (staging boxes, air-gapped instances) is one file:
+
 1. Copy `com.yesuchum.Cairn.FollowingEvents.dll` into `RockWeb\Bin`.
 2. Recycle the application pool.
-3. Open **Admin Tools > System Settings > Following Events**. The Cairn components are in the Event Type dropdown when you add a new event type; every one ends in `(cairn plugin)`.
+
+Either way, open **Admin Tools > System Settings > Following Events** afterward. The Cairn components are in the Event Type dropdown when you add a new event type; every one ends in `(cairn plugin)`.
 
 On first start a single seed migration runs — config rows only, no tables — creating one inactive starter event type per component with a working template baked in (see Starter event types below).
 

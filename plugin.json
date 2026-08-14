@@ -1,0 +1,8 @@
+{
+  "organization": { "name": "Yesu Chum", "code": "com.yesuchum" },
+  "name": "Cairn",
+  "version": "1.0.0",
+  "include": {
+    "bin/Release/net472/com.yesuchum.Cairn.FollowingEvents.dll": "Bin/"
+  }
+}

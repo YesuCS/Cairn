@@ -1,6 +1,6 @@
 # Cairn Uninstall Guide
 
-Cairn ships no tables, no pages, no blocks, and no jobs — just components and one config-only seed migration — so uninstall is short.
+Cairn ships no tables, no pages, no blocks, and no jobs — just components and one config-only seed migration — so uninstall is short. The package carries full uninstall support (`uninstall/deletefile.lst` plus `uninstall/run.sql` doing exactly the steps below), for when the Rock Shop client executes it; until then, the manual pass:
 
 ## 1. Remove the event types
 
