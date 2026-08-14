@@ -1,0 +1,49 @@
+{% comment %}
+    Cairn: follow button for Registration Instance detail.
+
+    Registration instance pages ship no follow control, so the three Cairn
+    registration components have no way to acquire followers without this.
+
+    Install: add an HTML block to the Registration Instance detail page
+    (zone of your choice), enable the RockEntity Lava command on the block,
+    and paste this snippet. The button toggles the current person's follow
+    of the instance via the same REST endpoints core's follow star uses.
+{% endcomment %}
+
+{% assign instanceId = 'Global' | PageParameter:'RegistrationInstanceId' %}
+{% if instanceId and CurrentPerson %}
+{% entitytype where:'Name == "Rock.Model.RegistrationInstance"' %}
+    {% assign entityTypeId = entitytype.Id %}
+{% endentitytype %}
+
+{% assign isFollowing = false %}
+{% following where:'EntityTypeId == {{ entityTypeId }} && EntityId == {{ instanceId }} && PersonAliasId == {{ CurrentPerson.PrimaryAliasId }}' %}
+    {% if followingItems != empty %}{% assign isFollowing = true %}{% endif %}
+{% endfollowing %}
+
+<button id="cairn-follow-btn" type="button" class="btn btn-default btn-sm {% if isFollowing %}active{% endif %}"
+    data-following="{{ isFollowing }}">
+    <i class="fa fa-star{% unless isFollowing %}-o{% endunless %}"></i>
+    <span>{% if isFollowing %}Following{% else %}Follow{% endif %}</span>
+</button>
+
+<script>
+    (function () {
+        var btn = document.getElementById('cairn-follow-btn');
+        if (!btn) { return; }
+        btn.addEventListener('click', function () {
+            var following = btn.getAttribute('data-following') === 'true';
+            var url = '/api/Followings/{{ entityTypeId }}/{{ instanceId }}';
+            $.ajax({
+                url: following ? url + '/{{ CurrentPerson.Id }}' : url,
+                type: following ? 'DELETE' : 'POST'
+            }).done(function () {
+                btn.setAttribute('data-following', following ? 'false' : 'true');
+                btn.classList.toggle('active', !following);
+                btn.querySelector('i').className = following ? 'fa fa-star-o' : 'fa fa-star';
+                btn.querySelector('span').textContent = following ? 'Follow' : 'Following';
+            });
+        });
+    })();
+</script>
+{% endif %}

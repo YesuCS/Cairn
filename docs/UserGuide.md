@@ -60,7 +60,17 @@ Core registration notifies one configured contact per instance. These flip that:
 
 **Closing Soon.** The registration end date falls inside Lead Days. Once ever per follow, and it includes the current registrant count so the notification doubles as a final-count preview.
 
-> Note: registration instance detail pages ship no follow control. Until one is added (a toolbar button or Lava snippet using the Following API), these components have no way to acquire followers. See the technical spec.
+> Note: registration instance detail pages ship no follow control, so these components need one added before they can acquire followers. Cairn ships a ready snippet — see **The registration follow button** below.
+
+## The registration follow button
+
+[`docs/registration-instance-follow.lava`](registration-instance-follow.lava) is a self-contained follow toggle for the Registration Instance detail page:
+
+1. Add an **HTML block** to the Registration Instance detail page, any zone.
+2. In the block's settings, enable the **RockEntity** Lava command.
+3. Paste the snippet as the block content.
+
+It renders a Follow/Following star for the current person and toggles the follow through the same `/api/Followings` endpoints core's own follow star uses. Once staff follow an instance, the three registration event types light up for them like any other following event.
 
 ## Starter event types
 
@@ -85,15 +95,58 @@ Every component hands the template ready merge objects — no date math in Lava.
 | Nearing Capacity | `EventData` | `SourceName`, `RegistrantCount`, `MaxAttendees`, `PercentFull` |
 | Closing Soon | `EventData` | `SourceName`, `CloseDate`, `DaysRemaining`, `RegistrantCount` |
 
-Starter template for an annual event type:
+### The template shapes
+
+The notification email wraps each event section in a `<table>`, so templates are `<tr>` rows — the same shape core's defaults use. Every starter event type ships its component's template pre-filled; these are the two shapes they build on, ready to copy when writing your own.
+
+Person events (photo, linked headline, contact lines):
 
 ```
-<p>
-    <a href="{{ 'Global' | Attribute:'InternalApplicationRoot' }}Person/{{ Entity.PersonId }}">{{ Entity.Person.FullName }}</a>
-    has their {{ EventData.Years | NumberToOrdinal }} {{ EventData.SourceName }} anniversary
-    on {{ EventData.NextDate | Date:'dddd, MMMM d' }}.
-</p>
+<tr>
+    <td style='padding-bottom: 12px; padding-right: 12px; min-width: 87px;'>
+        {% if Entity.Person.PhotoId %}
+            <img src='{{ 'Global' | Attribute:'PublicApplicationRoot' }}GetImage.ashx?id={{ Entity.Person.PhotoId }}&maxwidth=75&maxheight=75'/>
+        {% endif %}
+    </td>
+    <td valign="top" style='padding-bottom: 12px; min-width: 300px;'>
+        <strong><a href="{{ 'Global' | Attribute:'PublicApplicationRoot' }}Person/{{ Entity.PersonId }}">{{ Entity.Person.FullName }}</a>
+        has their {{ EventData.Years | NumberToOrdinal }} {{ EventData.SourceName }} anniversary
+        on {{ EventData.NextDate | Date:'dddd, MMMM d' }} ({{ EventData.NextDate | DaysFromNow | Capitalize }})</strong><br />
+
+        {% if Entity.Person.Email != empty %}
+            Email: <a href="mailto:{{ Entity.Person.Email }}">{{ Entity.Person.Email }}</a><br />
+        {% endif %}
+
+        {% assign mobilePhone = Entity.Person.PhoneNumbers | Where:'NumberTypeValueId', 12 | Select:'NumberFormatted' %}
+        {% if mobilePhone != empty %}
+            Cell: {{ mobilePhone }}<br />
+        {% endif %}
+
+        {% assign homePhone = Entity.Person.PhoneNumbers | Where:'NumberTypeValueId', 13 | Select:'NumberFormatted' %}
+        {% if homePhone != empty %}
+            Home: {{ homePhone }}<br />
+        {% endif %}
+    </td>
+</tr>
 ```
+
+Swap the headline (the `<strong>` line) for the component you're using — the merge-field table above lists what each one provides.
+
+Group and registration events (linked headline plus detail lines; here, Member Added):
+
+```
+<tr>
+    <td style='padding-bottom: 12px; padding-right: 12px; min-width: 87px;'>&nbsp;</td>
+    <td valign="top" style='padding-bottom: 12px; min-width: 300px;'>
+        <strong>{{ MemberData.MemberName }} was added to
+        <a href="{{ 'Global' | Attribute:'InternalApplicationRoot' }}Group/{{ Entity.Id }}">{{ Entity.Name }}</a></strong><br />
+        Role: {{ MemberData.RoleName }}<br />
+        Added: {{ MemberData.AddedDateTime | Date:'dddd, MMMM d' }}<br />
+    </td>
+</tr>
+```
+
+Registration templates link the instance the same way: `<a href="{{ 'Global' | Attribute:'InternalApplicationRoot' }}RegistrationInstance/{{ Entity.Id }}">{{ Entity.Name }}</a>`. Every default headline links the entity it's about — person, group, or instance — so the digest is one click from the thing itself.
 
 ## Security. Read this part.
 
