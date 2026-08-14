@@ -55,7 +55,7 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
             get
             {
                 return BasicNotificationRow(
-                    "{{ EventData.SourceName }} is {{ EventData.PercentFull }}% full",
+                    RegistrationInstanceLinkLava + " is {{ EventData.PercentFull }}% full",
                     "{{ EventData.RegistrantCount }} of {{ EventData.MaxAttendees }} spots filled<br />" );
             }
         }

@@ -53,7 +53,7 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
             get
             {
                 return BasicNotificationRow(
-                    "{{ EventData.SourceName }} registration closes {{ EventData.CloseDate | Date:'dddd, MMMM d' }} ({{ EventData.CloseDate | DaysFromNow | Capitalize }})",
+                    RegistrationInstanceLinkLava + " registration closes {{ EventData.CloseDate | Date:'dddd, MMMM d' }} ({{ EventData.CloseDate | DaysFromNow | Capitalize }})",
                     "{{ EventData.RegistrantCount }} registered so far<br />" );
             }
         }

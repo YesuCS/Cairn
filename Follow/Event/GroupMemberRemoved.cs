@@ -54,7 +54,7 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
             get
             {
                 return BasicNotificationRow(
-                    "{{ MemberData.MemberName }} left {{ Entity.Name }}",
+                    "{{ MemberData.MemberName }} left " + GroupLinkLava,
                     "Role: {{ MemberData.RoleName }}<br />Left: {{ MemberData.ExitDateTime | Date:'dddd, MMMM d' }}<br />" );
             }
         }

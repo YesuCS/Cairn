@@ -55,7 +55,7 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
             get
             {
                 return BasicNotificationRow(
-                    "{{ Entity.Name }} has no attendance entered for {{ OccurrenceData.OccurrenceDate | Date:'dddd, MMMM d' }}",
+                    GroupLinkLava + " has no attendance entered for {{ OccurrenceData.OccurrenceDate | Date:'dddd, MMMM d' }}",
                     "{% if OccurrenceData.ScheduleName != '' %}Schedule: {{ OccurrenceData.ScheduleName }}<br />{% endif %}" );
             }
         }

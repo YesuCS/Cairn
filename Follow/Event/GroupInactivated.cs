@@ -51,7 +51,7 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
             get
             {
                 return BasicNotificationRow(
-                    "{{ EventData.SourceName }} was {{ EventData.ChangeType | Downcase }} on {{ EventData.ChangeDateTime | Date:'dddd, MMMM d' }}" );
+                    GroupLinkLava + " was {{ EventData.ChangeType | Downcase }} on {{ EventData.ChangeDateTime | Date:'dddd, MMMM d' }}" );
             }
         }
 

@@ -54,7 +54,7 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
             get
             {
                 return BasicNotificationRow(
-                    "{{ MemberData.MemberName }} was added to {{ Entity.Name }}",
+                    "{{ MemberData.MemberName }} was added to " + GroupLinkLava,
                     "Role: {{ MemberData.RoleName }}<br />Added: {{ MemberData.AddedDateTime | Date:'dddd, MMMM d' }}<br />" );
             }
         }

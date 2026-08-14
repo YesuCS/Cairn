@@ -54,7 +54,7 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
             get
             {
                 return BasicNotificationRow(
-                    "{{ RegistrationData.RegisteredBy }} registered for {{ Entity.Name }}",
+                    "{{ RegistrationData.RegisteredBy }} registered for " + RegistrationInstanceLinkLava,
                     "Registrants: {{ RegistrationData.RegistrantNames }}<br />Registered: {{ RegistrationData.RegisteredDateTime | Date:'dddd, MMMM d' }}<br />" );
             }
         }

@@ -110,6 +110,16 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow
         protected const string PersonLinkLava = @"<a href=""{{ 'Global' | Attribute:'PublicApplicationRoot' }}Person/{{ Entity.PersonId }}"">{{ Entity.Person.FullName }}</a>";
 
         /// <summary>
+        /// The standard Lava for a linked group name (Group Viewer is an internal page).
+        /// </summary>
+        protected const string GroupLinkLava = @"<a href=""{{ 'Global' | Attribute:'InternalApplicationRoot' }}Group/{{ Entity.Id }}"">{{ Entity.Name }}</a>";
+
+        /// <summary>
+        /// The standard Lava for a linked registration instance name (internal page).
+        /// </summary>
+        protected const string RegistrationInstanceLinkLava = @"<a href=""{{ 'Global' | Attribute:'InternalApplicationRoot' }}RegistrationInstance/{{ Entity.Id }}"">{{ Entity.Name }}</a>";
+
+        /// <summary>
         /// Formats the entity notification, rendering the template once per merge object.
         /// </summary>
         public string FormatEntityNotification( FollowingEventType followingEvent, IEntity entity, Dictionary<string, List<object>> additionalMergeFields )
