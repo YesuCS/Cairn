@@ -50,6 +50,15 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         }
 
         /// <inheritdoc/>
+        protected override string DefaultNotificationFormat
+        {
+            get
+            {
+                return "<p>{{ Entity.Name }} has no attendance entered for {{ OccurrenceData.OccurrenceDate | Date:'dddd, MMMM d' }}{% if OccurrenceData.ScheduleName != '' %} ({{ OccurrenceData.ScheduleName }}){% endif %}.</p>";
+            }
+        }
+
+        /// <inheritdoc/>
         public override Type FollowedType
         {
             get { return typeof( Rock.Model.Group ); }

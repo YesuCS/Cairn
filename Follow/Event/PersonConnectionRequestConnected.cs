@@ -53,6 +53,15 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         }
 
         /// <inheritdoc/>
+        protected override string DefaultNotificationFormat
+        {
+            get
+            {
+                return "<p><a href=\"{{ 'Global' | Attribute:'InternalApplicationRoot' }}Person/{{ Entity.PersonId }}\">{{ Entity.Person.FullName }}</a>'s {{ EventData.SourceName }} request was connected on {{ EventData.ConnectedDateTime | Date:'MMMM d' }}{% if EventData.ConnectorName != '' %} by {{ EventData.ConnectorName }}{% endif %}.</p>";
+            }
+        }
+
+        /// <inheritdoc/>
         public override Type FollowedType
         {
             get { return typeof( Rock.Model.PersonAlias ); }

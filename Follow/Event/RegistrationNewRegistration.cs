@@ -49,6 +49,15 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         }
 
         /// <inheritdoc/>
+        protected override string DefaultNotificationFormat
+        {
+            get
+            {
+                return "<p>{{ RegistrationData.RegisteredBy }} registered {{ RegistrationData.RegistrantNames }} for {{ Entity.Name }} on {{ RegistrationData.RegisteredDateTime | Date:'MMMM d' }}.</p>";
+            }
+        }
+
+        /// <inheritdoc/>
         public override Type FollowedType
         {
             get { return typeof( Rock.Model.RegistrationInstance ); }

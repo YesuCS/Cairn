@@ -49,6 +49,15 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         }
 
         /// <inheritdoc/>
+        protected override string DefaultNotificationFormat
+        {
+            get
+            {
+                return "<p>{{ MemberData.MemberName }} ({{ MemberData.RoleName }}) left {{ Entity.Name }} on {{ MemberData.ExitDateTime | Date:'MMMM d' }}.</p>";
+            }
+        }
+
+        /// <inheritdoc/>
         public override Type FollowedType
         {
             get { return typeof( Rock.Model.Group ); }

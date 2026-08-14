@@ -46,7 +46,7 @@ Follow a group with the star on Group Detail. These notify the follower — a co
 
 **Member Removed.** A membership went inactive or was archived inside the window. Same hard-delete caveat as Left Group of Type.
 
-**Attendance Not Entered.** A past occurrence is more than Days After Occurrence old with no attendance recorded and Did Not Occur unset. Re-notify Days (default 7) keeps reminding until somebody enters it; 0 nags exactly once.
+**Attendance Not Entered.** A past occurrence is more than Days After Occurrence old with no attendance recorded and Did Not Occur unset. Re-notify Days (default 7) keeps reminding until somebody enters it; 0 nags exactly once. Two boundaries: the group's type must take attendance, and an occurrence row must actually exist (check-in, the attendance entry page, or the reminder infrastructure creates them). A meeting whose occurrence was never generated is invisible to this event — it catches "the row is there and nobody filled it in," which is the common leader-forgot case.
 
 **Inactivated or Archived.** The group itself was inactivated or archived. Once ever per follow. Rock stores no inactivated timestamp, so the group's last-modified time stands in for the inactivate case.
 
@@ -63,6 +63,8 @@ Core registration notifies one configured contact per instance. These flip that:
 > Note: registration instance detail pages ship no follow control. Until one is added (a toolbar button or Lava snippet using the Following API), these components have no way to acquire followers. See the technical spec.
 
 ## Notification templates
+
+**You can leave the Entity Notification Format blank.** Every Cairn component ships a built-in default template, used whenever the event type's format box is empty — so a new event type sends a sensible email with zero Lava written. Write your own format and yours wins.
 
 Every component hands the template ready merge objects — no date math in Lava. The multi-item components (`MemberData`, `OccurrenceData`, `RegistrationData`) render the template once per item, the same way core's Person Note Added works.
 

@@ -54,6 +54,15 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         }
 
         /// <inheritdoc/>
+        protected override string DefaultNotificationFormat
+        {
+            get
+            {
+                return "<p><a href=\"{{ 'Global' | Attribute:'InternalApplicationRoot' }}Person/{{ Entity.PersonId }}\">{{ Entity.Person.FullName }}</a> is in the '{{ EventData.SourceName }}' data view.</p>";
+            }
+        }
+
+        /// <inheritdoc/>
         public override Type FollowedType
         {
             get { return typeof( Rock.Model.PersonAlias ); }

@@ -49,6 +49,15 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         }
 
         /// <inheritdoc/>
+        protected override string DefaultNotificationFormat
+        {
+            get
+            {
+                return "<p>{{ MemberData.MemberName }} was added to {{ Entity.Name }} as {{ MemberData.RoleName }} on {{ MemberData.AddedDateTime | Date:'MMMM d' }}.</p>";
+            }
+        }
+
+        /// <inheritdoc/>
         public override Type FollowedType
         {
             get { return typeof( Rock.Model.Group ); }

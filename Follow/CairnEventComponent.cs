@@ -47,6 +47,16 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow
         }
 
         /// <summary>
+        /// The Lava used when the event type's Entity Notification Format is left blank,
+        /// so staff get a working email without writing a template from scratch. An
+        /// event type's own format always wins when present.
+        /// </summary>
+        protected virtual string DefaultNotificationFormat
+        {
+            get { return string.Empty; }
+        }
+
+        /// <summary>
         /// Formats the entity notification, rendering the template once per merge object.
         /// </summary>
         public string FormatEntityNotification( FollowingEventType followingEvent, IEntity entity, Dictionary<string, List<object>> additionalMergeFields )
@@ -54,6 +64,12 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow
             if ( followingEvent == null )
             {
                 return string.Empty;
+            }
+
+            var template = followingEvent.EntityNotificationFormatLava;
+            if ( string.IsNullOrWhiteSpace( template ) )
+            {
+                template = DefaultNotificationFormat;
             }
 
             var sb = new StringBuilder();
@@ -64,7 +80,7 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow
                 foreach ( var mergeFieldValue in mergeFieldPair.Value )
                 {
                     mergeFields.AddOrReplace( mergeFieldPair.Key, mergeFieldValue );
-                    sb.Append( followingEvent.EntityNotificationFormatLava.ResolveMergeFields( mergeFields ) );
+                    sb.Append( template.ResolveMergeFields( mergeFields ) );
                 }
             }
 

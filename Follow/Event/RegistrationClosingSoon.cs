@@ -48,6 +48,15 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         }
 
         /// <inheritdoc/>
+        protected override string DefaultNotificationFormat
+        {
+            get
+            {
+                return "<p>{{ EventData.SourceName }} registration closes {{ EventData.CloseDate | Date:'dddd, MMMM d' }} — {{ EventData.DaysRemaining }} days left, {{ EventData.RegistrantCount }} registered.</p>";
+            }
+        }
+
+        /// <inheritdoc/>
         public override Type FollowedType
         {
             get { return typeof( Rock.Model.RegistrationInstance ); }

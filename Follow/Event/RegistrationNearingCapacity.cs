@@ -50,6 +50,15 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         }
 
         /// <inheritdoc/>
+        protected override string DefaultNotificationFormat
+        {
+            get
+            {
+                return "<p>{{ EventData.SourceName }} is {{ EventData.PercentFull }}% full ({{ EventData.RegistrantCount }} of {{ EventData.MaxAttendees }}).</p>";
+            }
+        }
+
+        /// <inheritdoc/>
         public override Type FollowedType
         {
             get { return typeof( Rock.Model.RegistrationInstance ); }

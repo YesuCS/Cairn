@@ -45,6 +45,15 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow
             public const string NthYear = "NthYear";
         }
 
+        /// <inheritdoc/>
+        protected override string DefaultNotificationFormat
+        {
+            get
+            {
+                return "<p><a href=\"{{ 'Global' | Attribute:'InternalApplicationRoot' }}Person/{{ Entity.PersonId }}\">{{ Entity.Person.FullName }}</a> has their {{ EventData.Years | NumberToOrdinal }} {{ EventData.SourceName }} anniversary on {{ EventData.NextDate | Date:'dddd, MMMM d' }}.</p>";
+            }
+        }
+
         /// <summary>
         /// All annual components follow a person.
         /// </summary>
