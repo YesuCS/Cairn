@@ -96,11 +96,12 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
 
             using ( var rockContext = new RockContext() )
             {
+                // State cannot be filtered in SQL: the v18.2-compiled enum reference
+                // does not bind on v19+. The person's request set is small; state and
+                // the date window are applied in memory.
                 var requestQry = new ConnectionRequestService( rockContext )
                     .Queryable().AsNoTracking()
-                    .Where( r =>
-                        r.PersonAlias.PersonId == personAlias.PersonId &&
-                        r.ConnectionState == ConnectionState.Connected );
+                    .Where( r => r.PersonAlias.PersonId == personAlias.PersonId );
 
                 if ( opportunityGuid.HasValue )
                 {
@@ -111,8 +112,6 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
                     requestQry = requestQry.Where( r => r.ConnectionOpportunity.ConnectionType.Guid == connectionTypeGuid.Value );
                 }
 
-                // A person's connected requests are a small set, so the date window is
-                // applied in memory where the runtime-detected connect time is available.
                 var connected = requestQry
                     .Select( r => new
                     {
@@ -121,6 +120,7 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
                         ConnectorName = r.ConnectorPersonAlias != null ? r.ConnectorPersonAlias.Person.NickName + " " + r.ConnectorPersonAlias.Person.LastName : null
                     } )
                     .ToList()
+                    .Where( r => IsConnected( r.Request ) )
                     .Select( r => new
                     {
                         r.OpportunityName,

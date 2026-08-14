@@ -111,11 +111,13 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
                     requestQry = requestQry.Where( r => r.ConnectionOpportunity.ConnectionType.Guid == connectionTypeGuid.Value );
                 }
 
+                // State is read via the version-safe helper after materializing; the
+                // v18.2-compiled enum reference does not bind on v19+.
                 var requests = requestQry
                     .Select( r => new
                     {
+                        Request = r,
                         OpportunityName = r.ConnectionOpportunity.Name,
-                        r.ConnectionState,
                         ConnectorName = r.ConnectorPersonAlias != null ? r.ConnectorPersonAlias.Person.NickName + " " + r.ConnectorPersonAlias.Person.LastName : null,
                         r.CreatedDateTime
                     } )
@@ -129,7 +131,7 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
                 followedEventObjects.Add( "EventData", new List<object>( requests.Select( r => new ConnectionRequestData
                 {
                     SourceName = r.OpportunityName,
-                    RequestState = r.ConnectionState.ToString(),
+                    RequestState = GetConnectionStateName( r.Request ),
                     ConnectorName = r.ConnectorName ?? string.Empty,
                     RequestDateTime = r.CreatedDateTime
                 } ) ) );

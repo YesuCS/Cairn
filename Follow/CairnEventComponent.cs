@@ -58,6 +58,31 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow
         }
 
         /// <summary>
+        /// v19 moved the ConnectionState enum to a different assembly, so code compiled
+        /// against the v18.2 floor cannot touch ConnectionRequest.ConnectionState
+        /// directly (MissingMethodException at runtime on v19+). Resolved once via
+        /// reflection; state is compared by enum name, which is stable across versions.
+        /// </summary>
+        private static readonly System.Reflection.PropertyInfo _connectionStateProperty =
+            typeof( ConnectionRequest ).GetProperty( "ConnectionState" );
+
+        /// <summary>
+        /// The request's connection state name ("Active", "Connected", ...), version-safe.
+        /// </summary>
+        protected static string GetConnectionStateName( ConnectionRequest request )
+        {
+            return _connectionStateProperty?.GetValue( request )?.ToString() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Whether the request is in the Connected state, version-safe.
+        /// </summary>
+        protected static bool IsConnected( ConnectionRequest request )
+        {
+            return GetConnectionStateName( request ) == "Connected";
+        }
+
+        /// <summary>
         /// Builds a digest table row in core's notification style: photo cell, bold
         /// headline, then the person's email/cell/home contact lines.
         /// </summary>

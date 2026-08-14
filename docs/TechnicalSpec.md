@@ -20,7 +20,8 @@ The schematic's original floor was v16, raised on contact with reality:
 
 Two places the floor shows in code:
 
-- `ConnectionRequest.ConnectedDateTime` is a v19 column, resolved at runtime: a one-time reflection lookup uses the real connect time on v19+ and falls back to `ModifiedDateTime` only on 18.x, where the column does not exist. The state filter runs in SQL; the date window is applied in memory over the person's (small) set of connected requests so the detected value is usable.
+- `ConnectionRequest.ConnectedDateTime` is a v19 column, resolved at runtime: a one-time reflection lookup uses the real connect time on v19+ and falls back to `ModifiedDateTime` only on 18.x, where the column does not exist.
+- v19 also moved the `ConnectionState` enum to a different assembly, so v18.2-compiled code cannot touch `ConnectionRequest.ConnectionState` directly (`MissingMethodException` at runtime on v19+). Both connection components filter by person in SQL and resolve state in memory via a cached reflection read, compared by enum name. A person's request set is small, so the in-memory pass is cheap. (`GroupMemberStatus` already lived in `Rock.Enums` at 18.2, so the group components bind correctly everywhere.)
 - `Group` has no inactivated timestamp in any version; `GroupInactivated` uses `ModifiedDateTime` for the inactivate case and the real `ArchivedDateTime` for the archive case.
 
 ## Base classes
