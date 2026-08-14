@@ -100,9 +100,7 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
                     .Queryable().AsNoTracking()
                     .Where( r =>
                         r.PersonAlias.PersonId == personAlias.PersonId &&
-                        r.ConnectionState == ConnectionState.Connected &&
-                        r.ModifiedDateTime.HasValue &&
-                        r.ModifiedDateTime > cutoff );
+                        r.ConnectionState == ConnectionState.Connected );
 
                 if ( opportunityGuid.HasValue )
                 {
@@ -113,15 +111,23 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
                     requestQry = requestQry.Where( r => r.ConnectionOpportunity.ConnectionType.Guid == connectionTypeGuid.Value );
                 }
 
+                // A person's connected requests are a small set, so the date window is
+                // applied in memory where the runtime-detected connect time is available.
                 var connected = requestQry
                     .Select( r => new
                     {
+                        Request = r,
                         OpportunityName = r.ConnectionOpportunity.Name,
-                        ConnectorName = r.ConnectorPersonAlias != null ? r.ConnectorPersonAlias.Person.NickName + " " + r.ConnectorPersonAlias.Person.LastName : null,
-                        // v19 adds ConnectionRequest.ConnectedDateTime; the v18.2 floor has no such
-                        // column, so the request's last-modified time stands in for the connect time.
-                        ConnectedDateTime = r.ModifiedDateTime
+                        ConnectorName = r.ConnectorPersonAlias != null ? r.ConnectorPersonAlias.Person.NickName + " " + r.ConnectorPersonAlias.Person.LastName : null
                     } )
+                    .ToList()
+                    .Select( r => new
+                    {
+                        r.OpportunityName,
+                        r.ConnectorName,
+                        ConnectedDateTime = GetConnectedDateTime( r.Request )
+                    } )
+                    .Where( r => r.ConnectedDateTime.HasValue && r.ConnectedDateTime > cutoff )
                     .ToList();
 
                 if ( !connected.Any() )
@@ -137,6 +143,29 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
                 } ) ) );
                 return true;
             }
+        }
+
+        /// <summary>
+        /// v19 added ConnectionRequest.ConnectedDateTime; the plugin compiles against
+        /// the v18.2 floor where it does not exist. Detected once via reflection: on
+        /// v19+ the real connect time is used, on 18.x the request's last-modified
+        /// time stands in.
+        /// </summary>
+        private static readonly System.Reflection.PropertyInfo _connectedDateTimeProperty =
+            typeof( ConnectionRequest ).GetProperty( "ConnectedDateTime" );
+
+        private static DateTime? GetConnectedDateTime( ConnectionRequest request )
+        {
+            if ( _connectedDateTimeProperty != null )
+            {
+                var value = _connectedDateTimeProperty.GetValue( request ) as DateTime?;
+                if ( value.HasValue )
+                {
+                    return value;
+                }
+            }
+
+            return request.ModifiedDateTime;
         }
 
         /// <summary>

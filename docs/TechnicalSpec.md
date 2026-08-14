@@ -20,7 +20,7 @@ The schematic's original floor was v16, raised on contact with reality:
 
 Two places the floor shows in code:
 
-- `ConnectionRequest.ConnectedDateTime` is a v19 column. On the 18.2 floor, `ModifiedDateTime` stands in for the connect time — the window check and the `ConnectedDateTime` merge field both use it.
+- `ConnectionRequest.ConnectedDateTime` is a v19 column, resolved at runtime: a one-time reflection lookup uses the real connect time on v19+ and falls back to `ModifiedDateTime` only on 18.x, where the column does not exist. The state filter runs in SQL; the date window is applied in memory over the person's (small) set of connected requests so the detected value is usable.
 - `Group` has no inactivated timestamp in any version; `GroupInactivated` uses `ModifiedDateTime` for the inactivate case and the real `ArchivedDateTime` for the archive case.
 
 ## Base classes
