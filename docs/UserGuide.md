@@ -107,3 +107,5 @@ Do both for anything sensitive. Benign event types (birthdays, serving anniversa
 ## Testing an event type
 
 Create it with Lead Days or Max Days Back set to hit today, follow a staged test person or group, run **Send Following Events** manually from Jobs Administration, and check the email. Run it a second time and confirm nothing re-fires — every component dedupes against the follower's last-notified date.
+
+**If the job reports "0 following events emails sent" and you know an event should have fired:** the job only notifies followers who are active members of the group configured in its **Eligible Followers** setting, with an active email address and an email preference that allows it. A follower outside that group is silently skipped — this is the job's own gate, not the event type's security, and it catches almost everyone once.
