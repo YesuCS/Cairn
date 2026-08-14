@@ -60,17 +60,7 @@ Core registration notifies one configured contact per instance. These flip that:
 
 **Closing Soon.** The registration end date falls inside Lead Days. Once ever per follow, and it includes the current registrant count so the notification doubles as a final-count preview.
 
-> Note: registration instance detail pages ship no follow control, so these components need one added before they can acquire followers. Cairn ships a ready snippet — see **The registration follow button** below.
-
-## The registration follow button
-
-[`docs/registration-instance-follow.lava`](registration-instance-follow.lava) is a self-contained follow toggle for the Registration Instance detail page:
-
-1. Add an **HTML block** to the Registration Instance detail page, any zone.
-2. In the block's settings, enable the **RockEntity** Lava command.
-3. Paste the snippet as the block content.
-
-It renders a Follow/Following star for the current person and toggles the follow through the same `/api/Followings` endpoints core's own follow star uses. Once staff follow an instance, the three registration event types light up for them like any other following event.
+Follow an instance with the star on its detail page — the Obsidian Registration Instance Detail block ships one natively.
 
 ## Starter event types
 

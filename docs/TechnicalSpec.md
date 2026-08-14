@@ -80,9 +80,9 @@ All fourteen are pinned in `SystemGuid/EntityType.cs` and were generated before 
 - No mutable instance state anywhere — components are MEF singletons.
 - `[DisplayName]` carries the dropdown label (the ComponentPicker prefers it over the split-cased class name); `[Description]` matches it. Both end in `(cairn plugin)`.
 
-## The follow affordance gap
+## Follow affordances
 
-Groups have a follow star on Group Detail. Registration Instance detail ships no follow control in any current version, so the three registration components cannot acquire followers until one is added — a toolbar button or a Lava snippet against the Following API on the instance detail page. Tracked as the one open build item.
+All native: person and group detail pages carry follow stars in core, and the Obsidian Registration Instance Detail block ships one as well — no plugin-side follow UI needed.
 
 ## Build and deploy
 

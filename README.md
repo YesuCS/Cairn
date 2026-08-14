@@ -10,6 +10,8 @@ Core v19 ships exactly eight event components. Nothing in this pack duplicates o
 - [Technical Specification](docs/TechnicalSpec.md). Architecture, base classes, dedupe patterns, the weekend shift, the version floor and why it is 18.2, build and deploy.
 - [Uninstall Guide](docs/Uninstall.md). Short. There is no schema to clean up.
 
+Follow affordances are all native: person and group detail pages have follow stars in core, and the Obsidian Registration Instance Detail block ships one too.
+
 ## The components
 
 | Followed type | Component | One line |
