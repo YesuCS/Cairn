@@ -1,0 +1,105 @@
+# Cairn User Guide
+
+## What this is
+
+Rock's Following system lets any staff member follow a person and get a nightly digest email when something happens: a birthday approaches, a note is added, a prayer request comes in. Core ships eight of those event components. Cairn adds fourteen more, and extends following beyond people: follow a group, follow a registration instance, and hear about the things that matter to each.
+
+Notifications ride Rock's existing **Send Following Events** job and its daily digest email. Cairn adds no jobs, no schedules, and no communication templates of its own.
+
+## Install
+
+1. Copy `com.yesuchum.Cairn.FollowingEvents.dll` into `RockWeb\Bin`.
+2. Recycle the application pool.
+3. Open **Admin Tools > System Settings > Following Events**. The Cairn components are in the Event Type dropdown when you add a new event type; every one ends in `(cairn plugin)`.
+
+That is the whole install. No migrations run, no tables are created.
+
+## Creating an event type
+
+An event type is a record staff create once per thing-worth-hearing-about: pick the component, configure its settings, write the notification template, set security. People then follow whoever or whatever they care about, and subscribe to the event types they want (or get them automatically if **Is Notice Required** is on).
+
+One component can back many event types. "Sobriety Anniversary" and "Salvation Anniversary" are two event types on the same Date Attribute Anniversary component with different attributes picked.
+
+## The components
+
+### Person components
+
+**Date Attribute Anniversary.** Annual recurrence on any Person date attribute. Settings: the attribute, Lead Days (5), Nth Year (0 = every year). The attribute picker lists all Person attributes — Rock's picker cannot filter by field type — but a non-date pick is harmless: the value parses to nothing and the event never fires.
+
+**Milestone Birthday.** Core Birthday, plus the Nth Year multiplier it lacks. Set Nth Year to 10 and you hear about 10th, 20th, 30th birthdays. `Years` in the template is the age they are turning.
+
+**Serving Anniversary.** Annual recurrence on the date the person first joined a group of the configured type. Point it at your serve-team group type and you get serving anniversaries. Active Members Only (default on) ignores memberships that have since gone inactive.
+
+**Data View Match.** The person is in the configured Data View's result set. The Data View must be persisted — the component reads the persisted values and never runs the view live, so follower-scale evaluation stays cheap. Rock stores no "entered the data view" date, so this fires on current membership with a Re-notify Days interval; 0 means once ever per follow.
+
+**Left Group of Type.** A membership in the configured group type went inactive or was archived inside the window. **Only If No Remaining Membership** (default on) stays quiet while the person still has another active group of that type — moving between small groups is not leaving small groups. Hard-deleted memberships leave no signal and are not detected; archive or inactivate instead of delete if you want this event to see it.
+
+**Entered Connection Opportunity.** A connection request was created for the person, matching a specific opportunity or a whole connection type (configure one of the two; the opportunity wins if both are set).
+
+**Connection Request Connected.** A request reached Connected. Fires once ever per follow.
+
+### Group components
+
+Follow a group with the star on Group Detail. These notify the follower — a coach, a pastor, an admin — not the group's members.
+
+**Member Added.** Someone was added inside the window. Include Pending (default off) also counts pending members. The template receives a `MemberData` list: name, role, date.
+
+**Member Removed.** A membership went inactive or was archived inside the window. Same hard-delete caveat as Left Group of Type.
+
+**Attendance Not Entered.** A past occurrence is more than Days After Occurrence old with no attendance recorded and Did Not Occur unset. Re-notify Days (default 7) keeps reminding until somebody enters it; 0 nags exactly once.
+
+**Inactivated or Archived.** The group itself was inactivated or archived. Once ever per follow. Rock stores no inactivated timestamp, so the group's last-modified time stands in for the inactivate case.
+
+### Registration instance components
+
+Core registration notifies one configured contact per instance. These flip that: anyone who follows the instance opts in, no event-owner configuration.
+
+**New Registration.** A registration came in inside the window. `RegistrationData` list: registrant names, who registered them, when.
+
+**Nearing Capacity.** Non-waitlist registrant count reached Threshold Percent (default 90) of Max Attendees. Instances with no Max Attendees never fire. Re-notify Days 0 = once ever.
+
+**Closing Soon.** The registration end date falls inside Lead Days. Once ever per follow, and it includes the current registrant count so the notification doubles as a final-count preview.
+
+> Note: registration instance detail pages ship no follow control. Until one is added (a toolbar button or Lava snippet using the Following API), these components have no way to acquire followers. See the technical spec.
+
+## Notification templates
+
+Every component hands the template ready merge objects — no date math in Lava. The multi-item components (`MemberData`, `OccurrenceData`, `RegistrationData`) render the template once per item, the same way core's Person Note Added works.
+
+| Component | Merge object | Fields |
+|---|---|---|
+| Annual components (Date Attribute, Birthday, Serving) | `EventData` | `SourceDate`, `NextDate`, `Years`, `SourceName` |
+| Data View Match | `EventData` | `SourceName`, `LastRefreshDateTime` |
+| Left Group of Type | `EventData` (per exit) | `SourceName`, `GroupName`, `ExitDateTime` |
+| Entered Connection Opportunity | `EventData` (per request) | `SourceName`, `RequestState`, `ConnectorName`, `RequestDateTime` |
+| Connection Request Connected | `EventData` (per request) | `SourceName`, `ConnectorName`, `ConnectedDateTime` |
+| Member Added | `MemberData` (per member) | `MemberName`, `RoleName`, `AddedDateTime` |
+| Member Removed | `MemberData` (per member) | `MemberName`, `RoleName`, `ExitDateTime` |
+| Attendance Not Entered | `OccurrenceData` (per occurrence) | `OccurrenceDate`, `ScheduleName` |
+| Inactivated or Archived | `EventData` | `SourceName`, `ChangeType`, `ChangeDateTime` |
+| New Registration | `RegistrationData` (per registration) | `RegistrantNames`, `RegisteredBy`, `RegisteredDateTime` |
+| Nearing Capacity | `EventData` | `SourceName`, `RegistrantCount`, `MaxAttendees`, `PercentFull` |
+| Closing Soon | `EventData` | `SourceName`, `CloseDate`, `DaysRemaining`, `RegistrantCount` |
+
+Starter template for an annual event type:
+
+```
+<p>
+    <a href="{{ 'Global' | Attribute:'InternalApplicationRoot' }}Person/{{ Entity.PersonId }}">{{ Entity.Person.FullName }}</a>
+    has their {{ EventData.Years | NumberToOrdinal }} {{ EventData.SourceName }} anniversary
+    on {{ EventData.NextDate | Date:'dddd, MMMM d' }}.
+</p>
+```
+
+## Security. Read this part.
+
+Notifications go to **anyone following the person who can see the event type**. Security on the underlying Person attribute does not trim the notification. If you build a Sobriety Anniversary event type, everyone who follows that person and can see the event type learns the date — the attribute's own security never gets a vote. The event type record is the enforcement point:
+
+- Restrict **View** on the event type to the owning ministry role.
+- Turn **Is Notice Required** off, so only deliberate subscribers receive it.
+
+Do both for anything sensitive. Benign event types (birthdays, serving anniversaries) are fine with defaults.
+
+## Testing an event type
+
+Create it with Lead Days or Max Days Back set to hit today, follow a staged test person or group, run **Send Following Events** manually from Jobs Administration, and check the email. Run it a second time and confirm nothing re-fires — every component dedupes against the follower's last-notified date.
