@@ -31,7 +31,7 @@ Follow affordances are all native: person and group detail pages have follow sta
 | RegistrationInstance | Nearing Capacity | Registrants reached a threshold percent of Max Attendees. |
 | RegistrationInstance | Closing Soon | Registration end date is inside the lead window. |
 
-Every dropdown entry ends in `(cairn plugin)` so nobody mistakes ours for core.
+Every dropdown entry ends in `(cairn plugin)` so nobody mistakes ours for core and can come at me if something breaks haha.
 
 ## Repo layout
 
