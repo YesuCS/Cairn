@@ -2,7 +2,9 @@
 
 ## Shape
 
-A single net472 class library, `com.yesuchum.Cairn.FollowingEvents`, containing fourteen `Rock.Follow.EventComponent` subclasses and two abstract bases. No plugin migrations, no custom tables, no blocks, no jobs, no REST. Components register themselves as EntityTypes on discovery; deploy is a DLL copy and a recycle.
+A single net472 class library, `com.yesuchum.Cairn.FollowingEvents`, containing fourteen `Rock.Follow.EventComponent` subclasses, two abstract bases, and one seed migration. No custom tables, no blocks, no jobs, no REST. Components register themselves as EntityTypes on discovery; deploy is a DLL copy and a recycle.
+
+The seed migration (`Migrations/001_SeedStarterEventTypes.cs`) inserts one inactive starter `FollowingEventType` per component — pinned guids, template baked in from the component's `DefaultNotificationFormat` property, per-component descriptions. Config rows only; idempotent per guid; `Down()` removes only starters that were never activated or renamed. The templates follow core's digest-row style (photo cell, bold headline, contact lines for person events) because the notification email wraps each section in a table. `DefaultNotificationFormat` is not a runtime fallback — the event type's own format is always what renders.
 
 The namespace keeps "FollowingEvents" so the assembly stays self-describing in Bin.
 

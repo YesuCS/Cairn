@@ -54,11 +54,11 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         }
 
         /// <inheritdoc/>
-        protected override string DefaultNotificationFormat
+        public override string DefaultNotificationFormat
         {
             get
             {
-                return "<p><a href=\"{{ 'Global' | Attribute:'InternalApplicationRoot' }}Person/{{ Entity.PersonId }}\">{{ Entity.Person.FullName }}</a> left {{ EventData.GroupName }} ({{ EventData.SourceName }}) on {{ EventData.ExitDateTime | Date:'MMMM d' }}.</p>";
+                return PersonNotificationRow( PersonLinkLava + " left {{ EventData.GroupName }} ({{ EventData.SourceName }}) on {{ EventData.ExitDateTime | Date:'dddd, MMMM d' }}" );
             }
         }
 

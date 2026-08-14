@@ -49,11 +49,13 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         }
 
         /// <inheritdoc/>
-        protected override string DefaultNotificationFormat
+        public override string DefaultNotificationFormat
         {
             get
             {
-                return "<p>{{ MemberData.MemberName }} ({{ MemberData.RoleName }}) left {{ Entity.Name }} on {{ MemberData.ExitDateTime | Date:'MMMM d' }}.</p>";
+                return BasicNotificationRow(
+                    "{{ MemberData.MemberName }} left {{ Entity.Name }}",
+                    "Role: {{ MemberData.RoleName }}<br />Left: {{ MemberData.ExitDateTime | Date:'dddd, MMMM d' }}<br />" );
             }
         }
 

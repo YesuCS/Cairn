@@ -46,11 +46,12 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         }
 
         /// <inheritdoc/>
-        protected override string DefaultNotificationFormat
+        public override string DefaultNotificationFormat
         {
             get
             {
-                return "<p>{{ EventData.SourceName }} was {{ EventData.ChangeType | Downcase }} on {{ EventData.ChangeDateTime | Date:'MMMM d' }}.</p>";
+                return BasicNotificationRow(
+                    "{{ EventData.SourceName }} was {{ EventData.ChangeType | Downcase }} on {{ EventData.ChangeDateTime | Date:'dddd, MMMM d' }}" );
             }
         }
 

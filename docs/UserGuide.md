@@ -12,7 +12,7 @@ Notifications ride Rock's existing **Send Following Events** job and its daily d
 2. Recycle the application pool.
 3. Open **Admin Tools > System Settings > Following Events**. The Cairn components are in the Event Type dropdown when you add a new event type; every one ends in `(cairn plugin)`.
 
-That is the whole install. No migrations run, no tables are created.
+On first start a single seed migration runs — config rows only, no tables — creating one inactive starter event type per component with a working template baked in (see Starter event types below).
 
 ## Creating an event type
 
@@ -62,9 +62,11 @@ Core registration notifies one configured contact per instance. These flip that:
 
 > Note: registration instance detail pages ship no follow control. Until one is added (a toolbar button or Lava snippet using the Following API), these components have no way to acquire followers. See the technical spec.
 
-## Notification templates
+## Starter event types
 
-**You can leave the Entity Notification Format blank.** Every Cairn component ships a built-in default template, used whenever the event type's format box is empty — so a new event type sends a sensible email with zero Lava written. Write your own format and yours wins.
+Install seeds one **inactive** starter event type per component, named `... (cairn starter)`, with a working notification template baked in — the same fleshed-out style as core's defaults (photo, bold headline, contact lines for person events). Edit a starter and activate it, or copy it and keep the original as a reference. Deleting starters is safe; the seed runs exactly once and never resurrects them.
+
+## Notification templates
 
 Every component hands the template ready merge objects — no date math in Lava. The multi-item components (`MemberData`, `OccurrenceData`, `RegistrationData`) render the template once per item, the same way core's Person Note Added works.
 

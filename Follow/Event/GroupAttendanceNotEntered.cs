@@ -50,11 +50,13 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         }
 
         /// <inheritdoc/>
-        protected override string DefaultNotificationFormat
+        public override string DefaultNotificationFormat
         {
             get
             {
-                return "<p>{{ Entity.Name }} has no attendance entered for {{ OccurrenceData.OccurrenceDate | Date:'dddd, MMMM d' }}{% if OccurrenceData.ScheduleName != '' %} ({{ OccurrenceData.ScheduleName }}){% endif %}.</p>";
+                return BasicNotificationRow(
+                    "{{ Entity.Name }} has no attendance entered for {{ OccurrenceData.OccurrenceDate | Date:'dddd, MMMM d' }}",
+                    "{% if OccurrenceData.ScheduleName != '' %}Schedule: {{ OccurrenceData.ScheduleName }}<br />{% endif %}" );
             }
         }
 

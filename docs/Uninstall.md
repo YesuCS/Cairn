@@ -1,10 +1,10 @@
 # Cairn Uninstall Guide
 
-Cairn ships no tables, no migrations, no pages, no blocks, and no jobs, so uninstall is short.
+Cairn ships no tables, no pages, no blocks, and no jobs — just components and one config-only seed migration — so uninstall is short.
 
 ## 1. Remove the event types
 
-Admin Tools > System Settings > Following Events: delete any event types built on the `(cairn plugin)` components. Do this first — an event type whose component DLL is missing logs exceptions when the Send Following Events job runs.
+Admin Tools > System Settings > Following Events: delete any event types built on the `(cairn plugin)` components, including the seeded `(cairn starter)` records. Do this first — an event type whose component DLL is missing logs exceptions when the Send Following Events job runs.
 
 If you would rather sweep them in SQL:
 
@@ -13,6 +13,8 @@ DELETE fet
 FROM [FollowingEventType] fet
 INNER JOIN [EntityType] et ON et.[Id] = fet.[EntityTypeId]
 WHERE et.[Name] LIKE 'com.yesuchum.Cairn%';
+
+DELETE FROM [PluginMigration] WHERE [PluginAssemblyName] LIKE 'com.yesuchum.Cairn%';
 ```
 
 ## 2. Remove the file

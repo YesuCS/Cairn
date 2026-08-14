@@ -49,11 +49,13 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         }
 
         /// <inheritdoc/>
-        protected override string DefaultNotificationFormat
+        public override string DefaultNotificationFormat
         {
             get
             {
-                return "<p>{{ RegistrationData.RegisteredBy }} registered {{ RegistrationData.RegistrantNames }} for {{ Entity.Name }} on {{ RegistrationData.RegisteredDateTime | Date:'MMMM d' }}.</p>";
+                return BasicNotificationRow(
+                    "{{ RegistrationData.RegisteredBy }} registered for {{ Entity.Name }}",
+                    "Registrants: {{ RegistrationData.RegistrantNames }}<br />Registered: {{ RegistrationData.RegisteredDateTime | Date:'dddd, MMMM d' }}<br />" );
             }
         }
 

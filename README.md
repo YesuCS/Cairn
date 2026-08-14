@@ -1,6 +1,6 @@
 # Cairn
 
-Fourteen following-event components for Rock RMS, named for the stacked stones that guide followers along a path. Follow a person and get told about the anniversaries, milestones, and transitions that matter; follow a group and hear when members come and go or attendance goes missing; follow a registration instance and watch it fill up and close. No tables, no migrations, no blocks: one DLL into `RockWeb/Bin` and the components appear in the Event Type dropdown.
+Fourteen following-event components for Rock RMS, named for the stacked stones that guide followers along a path. Follow a person and get told about the anniversaries, milestones, and transitions that matter; follow a group and hear when members come and go or attendance goes missing; follow a registration instance and watch it fill up and close. No tables, no blocks: one DLL into `RockWeb/Bin`, a config-only seed migration creates fourteen inactive starter event types with working templates, and the components appear in the Event Type dropdown.
 
 Core v19 ships exactly eight event components. Nothing in this pack duplicates one.
 

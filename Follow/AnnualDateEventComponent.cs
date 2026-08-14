@@ -46,11 +46,11 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow
         }
 
         /// <inheritdoc/>
-        protected override string DefaultNotificationFormat
+        public override string DefaultNotificationFormat
         {
             get
             {
-                return "<p><a href=\"{{ 'Global' | Attribute:'InternalApplicationRoot' }}Person/{{ Entity.PersonId }}\">{{ Entity.Person.FullName }}</a> has their {{ EventData.Years | NumberToOrdinal }} {{ EventData.SourceName }} anniversary on {{ EventData.NextDate | Date:'dddd, MMMM d' }}.</p>";
+                return PersonNotificationRow( PersonLinkLava + " has their {{ EventData.Years | NumberToOrdinal }} {{ EventData.SourceName }} anniversary on {{ EventData.NextDate | Date:'dddd, MMMM d' }} ({{ EventData.NextDate | DaysFromNow | Capitalize }})" );
             }
         }
 

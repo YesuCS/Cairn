@@ -48,11 +48,13 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         }
 
         /// <inheritdoc/>
-        protected override string DefaultNotificationFormat
+        public override string DefaultNotificationFormat
         {
             get
             {
-                return "<p>{{ EventData.SourceName }} registration closes {{ EventData.CloseDate | Date:'dddd, MMMM d' }} — {{ EventData.DaysRemaining }} days left, {{ EventData.RegistrantCount }} registered.</p>";
+                return BasicNotificationRow(
+                    "{{ EventData.SourceName }} registration closes {{ EventData.CloseDate | Date:'dddd, MMMM d' }} ({{ EventData.CloseDate | DaysFromNow | Capitalize }})",
+                    "{{ EventData.RegistrantCount }} registered so far<br />" );
             }
         }
 

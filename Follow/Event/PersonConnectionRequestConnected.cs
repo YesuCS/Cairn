@@ -53,11 +53,11 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         }
 
         /// <inheritdoc/>
-        protected override string DefaultNotificationFormat
+        public override string DefaultNotificationFormat
         {
             get
             {
-                return "<p><a href=\"{{ 'Global' | Attribute:'InternalApplicationRoot' }}Person/{{ Entity.PersonId }}\">{{ Entity.Person.FullName }}</a>'s {{ EventData.SourceName }} request was connected on {{ EventData.ConnectedDateTime | Date:'MMMM d' }}{% if EventData.ConnectorName != '' %} by {{ EventData.ConnectorName }}{% endif %}.</p>";
+                return PersonNotificationRow( PersonLinkLava + "'s {{ EventData.SourceName }} request was connected on {{ EventData.ConnectedDateTime | Date:'dddd, MMMM d' }}{% if EventData.ConnectorName != '' %} by {{ EventData.ConnectorName }}{% endif %}" );
             }
         }
 

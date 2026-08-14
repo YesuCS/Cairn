@@ -49,11 +49,13 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         }
 
         /// <inheritdoc/>
-        protected override string DefaultNotificationFormat
+        public override string DefaultNotificationFormat
         {
             get
             {
-                return "<p>{{ MemberData.MemberName }} was added to {{ Entity.Name }} as {{ MemberData.RoleName }} on {{ MemberData.AddedDateTime | Date:'MMMM d' }}.</p>";
+                return BasicNotificationRow(
+                    "{{ MemberData.MemberName }} was added to {{ Entity.Name }}",
+                    "Role: {{ MemberData.RoleName }}<br />Added: {{ MemberData.AddedDateTime | Date:'dddd, MMMM d' }}<br />" );
             }
         }
 

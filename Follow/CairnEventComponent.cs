@@ -47,14 +47,67 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow
         }
 
         /// <summary>
-        /// The Lava used when the event type's Entity Notification Format is left blank,
-        /// so staff get a working email without writing a template from scratch. An
-        /// event type's own format always wins when present.
+        /// The starter Lava the install migration bakes into this component's seeded
+        /// (inactive) event type record, so staff edit or copy a visible template
+        /// instead of writing one from scratch. Not used as a runtime fallback — the
+        /// event type's own format is always what renders.
         /// </summary>
-        protected virtual string DefaultNotificationFormat
+        public virtual string DefaultNotificationFormat
         {
             get { return string.Empty; }
         }
+
+        /// <summary>
+        /// Builds a digest table row in core's notification style: photo cell, bold
+        /// headline, then the person's email/cell/home contact lines.
+        /// </summary>
+        protected static string PersonNotificationRow( string headlineLava )
+        {
+            return @"<tr>
+    <td style='padding-bottom: 12px; padding-right: 12px; min-width: 87px;'>
+        {% if Entity.Person.PhotoId %}
+            <img src='{{ 'Global' | Attribute:'PublicApplicationRoot' }}GetImage.ashx?id={{ Entity.Person.PhotoId }}&maxwidth=75&maxheight=75'/>
+        {% endif %}
+    </td>
+    <td valign=""top"" style='padding-bottom: 12px; min-width: 300px;'>
+        <strong>" + headlineLava + @"</strong><br />
+
+        {% if Entity.Person.Email != empty %}
+            Email: <a href=""mailto:{{ Entity.Person.Email }}"">{{ Entity.Person.Email }}</a><br />
+        {% endif %}
+
+        {% assign mobilePhone = Entity.Person.PhoneNumbers | Where:'NumberTypeValueId', 12 | Select:'NumberFormatted' %}
+        {% if mobilePhone != empty %}
+            Cell: {{ mobilePhone }}<br />
+        {% endif %}
+
+        {% assign homePhone = Entity.Person.PhoneNumbers | Where:'NumberTypeValueId', 13 | Select:'NumberFormatted' %}
+        {% if homePhone != empty %}
+            Home: {{ homePhone }}<br />
+        {% endif %}
+    </td>
+</tr>";
+        }
+
+        /// <summary>
+        /// Builds a digest table row for non-person entities: bold headline plus
+        /// optional detail lines, aligned with the core two-cell layout.
+        /// </summary>
+        protected static string BasicNotificationRow( string headlineLava, string detailLava = "" )
+        {
+            return @"<tr>
+    <td style='padding-bottom: 12px; padding-right: 12px; min-width: 87px;'>&nbsp;</td>
+    <td valign=""top"" style='padding-bottom: 12px; min-width: 300px;'>
+        <strong>" + headlineLava + @"</strong><br />
+        " + detailLava + @"
+    </td>
+</tr>";
+        }
+
+        /// <summary>
+        /// The standard Lava for a linked person name, used to open person headlines.
+        /// </summary>
+        protected const string PersonLinkLava = @"<a href=""{{ 'Global' | Attribute:'PublicApplicationRoot' }}Person/{{ Entity.PersonId }}"">{{ Entity.Person.FullName }}</a>";
 
         /// <summary>
         /// Formats the entity notification, rendering the template once per merge object.
@@ -66,11 +119,7 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow
                 return string.Empty;
             }
 
-            var template = followingEvent.EntityNotificationFormatLava;
-            if ( string.IsNullOrWhiteSpace( template ) )
-            {
-                template = DefaultNotificationFormat;
-            }
+            var template = followingEvent.EntityNotificationFormatLava ?? string.Empty;
 
             var sb = new StringBuilder();
             var mergeFields = new Dictionary<string, object>();

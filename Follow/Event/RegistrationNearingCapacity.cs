@@ -50,11 +50,13 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         }
 
         /// <inheritdoc/>
-        protected override string DefaultNotificationFormat
+        public override string DefaultNotificationFormat
         {
             get
             {
-                return "<p>{{ EventData.SourceName }} is {{ EventData.PercentFull }}% full ({{ EventData.RegistrantCount }} of {{ EventData.MaxAttendees }}).</p>";
+                return BasicNotificationRow(
+                    "{{ EventData.SourceName }} is {{ EventData.PercentFull }}% full",
+                    "{{ EventData.RegistrantCount }} of {{ EventData.MaxAttendees }} spots filled<br />" );
             }
         }
 

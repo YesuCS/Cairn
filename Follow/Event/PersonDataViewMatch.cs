@@ -54,11 +54,11 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         }
 
         /// <inheritdoc/>
-        protected override string DefaultNotificationFormat
+        public override string DefaultNotificationFormat
         {
             get
             {
-                return "<p><a href=\"{{ 'Global' | Attribute:'InternalApplicationRoot' }}Person/{{ Entity.PersonId }}\">{{ Entity.Person.FullName }}</a> is in the '{{ EventData.SourceName }}' data view.</p>";
+                return PersonNotificationRow( PersonLinkLava + " is in the {{ EventData.SourceName }} data view." );
             }
         }
 
