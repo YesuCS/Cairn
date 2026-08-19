@@ -40,7 +40,7 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
     [Export( typeof( Rock.Follow.EventComponent ) )]
     [ExportMetadata( "ComponentName", "PersonLeftGroupType" )]
 
-    [GroupTypeField( "Group Type", "The group type to watch for exits.", true, "", "", 0, AttributeKey.GroupType )]
+    [GroupTypesField( "Group Type(s)", "The group type(s) to watch for exits.", true, "", "", 0, AttributeKey.GroupType )]
     [IntegerField( "Max Days Back", "Maximum number of days back to consider.", false, 30, "", 1, AttributeKey.MaxDaysBack )]
     [BooleanField( "Only If No Remaining Membership", "Only notify when the person has no remaining active membership in any group of this type.", true, "", 2, AttributeKey.OnlyIfNoRemainingMembership )]
     [Rock.SystemGuid.EntityTypeGuid( SystemGuid.EntityType.PERSON_LEFT_GROUP_TYPE )]
@@ -74,8 +74,8 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
             followedEventObjects = new Dictionary<string, List<object>>();
 
             var personAlias = entity as PersonAlias;
-            var groupTypeGuid = GetAttributeValue( followingEvent, AttributeKey.GroupType ).AsGuidOrNull();
-            if ( followingEvent == null || personAlias == null || !groupTypeGuid.HasValue )
+            var groupTypeGuids = GetAttributeValue( followingEvent, AttributeKey.GroupType ).SplitDelimitedValues().AsGuidList();
+            if ( followingEvent == null || personAlias == null || !groupTypeGuids.Any() )
             {
                 return false;
             }
@@ -94,7 +94,7 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
                     .Queryable( true ).AsNoTracking()
                     .Where( m =>
                         m.PersonId == personAlias.PersonId &&
-                        m.Group.GroupType.Guid == groupTypeGuid.Value );
+                        groupTypeGuids.Contains( m.Group.GroupType.Guid ) );
 
                 var exited = memberQry
                     .Where( m =>
@@ -103,6 +103,7 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
                     .Select( m => new
                     {
                         GroupName = m.Group.Name,
+                        GroupTypeName = m.Group.GroupType.Name,
                         ExitDateTime = m.IsArchived ? m.ArchivedDateTime : m.InactiveDateTime
                     } )
                     .ToList();
@@ -121,10 +122,9 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
                     }
                 }
 
-                var groupTypeName = GroupTypeCache.Get( groupTypeGuid.Value )?.Name ?? string.Empty;
                 followedEventObjects.Add( "EventData", new List<object>( exited.Select( e => new LeftGroupData
                 {
-                    SourceName = groupTypeName,
+                    SourceName = e.GroupTypeName,
                     GroupName = e.GroupName,
                     ExitDateTime = e.ExitDateTime
                 } ) ) );

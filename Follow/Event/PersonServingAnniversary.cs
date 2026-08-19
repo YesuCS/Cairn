@@ -37,7 +37,7 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
     [Export( typeof( Rock.Follow.EventComponent ) )]
     [ExportMetadata( "ComponentName", "PersonServingAnniversary" )]
 
-    [GroupTypeField( "Group Type", "The group type whose first-join date anchors the anniversary.", true, "", "", 0, AttributeKey.GroupType )]
+    [GroupTypesField( "Group Type(s)", "The group type(s) whose earliest first-join date anchors the anniversary.", true, "", "", 0, AttributeKey.GroupType )]
     [IntegerField( "Lead Days", "The number of days prior to the anniversary that the notification should be sent.", false, 5, "", 1, AnnualDateEventComponent.AnnualAttributeKey.LeadDays )]
     [IntegerField( "Nth Year", "Only notify for anniversaries that are a multiple of this number (0 = every year).", false, 0, "", 2, AnnualDateEventComponent.AnnualAttributeKey.NthYear )]
     [BooleanField( "Active Members Only", "Only consider memberships that are currently active.", true, "", 3, AttributeKey.ActiveMembersOnly )]
@@ -53,8 +53,8 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         /// <inheritdoc/>
         protected override DateTime? GetSourceDate( FollowingEventType followingEvent, PersonAlias personAlias, RockContext rockContext )
         {
-            var groupTypeGuid = GetAttributeValue( followingEvent, AttributeKey.GroupType ).AsGuidOrNull();
-            if ( !groupTypeGuid.HasValue )
+            var groupTypeGuids = GetAttributeValue( followingEvent, AttributeKey.GroupType ).SplitDelimitedValues().AsGuidList();
+            if ( !groupTypeGuids.Any() )
             {
                 return null;
             }
@@ -65,7 +65,7 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
                 .Queryable().AsNoTracking()
                 .Where( m =>
                     m.PersonId == personAlias.PersonId &&
-                    m.Group.GroupType.Guid == groupTypeGuid.Value );
+                    groupTypeGuids.Contains( m.Group.GroupType.Guid ) );
 
             if ( activeOnly )
             {
@@ -78,17 +78,11 @@ namespace com.yesuchum.Cairn.FollowingEvents.Follow.Event
         /// <inheritdoc/>
         protected override string GetSourceName( FollowingEventType followingEvent, RockContext rockContext )
         {
-            var groupTypeGuid = GetAttributeValue( followingEvent, AttributeKey.GroupType ).AsGuidOrNull();
-            if ( groupTypeGuid.HasValue )
-            {
-                var groupType = GroupTypeCache.Get( groupTypeGuid.Value );
-                if ( groupType != null )
-                {
-                    return groupType.Name;
-                }
-            }
-
-            return string.Empty;
+            var names = GetAttributeValue( followingEvent, AttributeKey.GroupType ).SplitDelimitedValues().AsGuidList()
+                .Select( g => GroupTypeCache.Get( g )?.Name )
+                .Where( n => n != null )
+                .ToList();
+            return string.Join( ", ", names );
         }
     }
 }

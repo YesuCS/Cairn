@@ -1,6 +1,6 @@
 # Cairn
 
-Fourteen following-event components for Rock RMS, named for the stacked stones that guide followers along a path. Follow a person and get told about the anniversaries, milestones, and transitions that matter; follow a group and hear when members come and go or attendance goes missing; follow a registration instance and watch it fill up and close. No tables, no blocks: one DLL into `RockWeb/Bin`, a config-only seed migration creates fourteen inactive starter event types with working templates, and the components appear in the Event Type dropdown.
+Fifteen following-event components for Rock RMS, named for the stacked stones that guide followers along a path. Follow a person and get told about the anniversaries, milestones, and transitions that matter; follow a group and hear when members come and go or attendance goes missing; follow a registration instance and watch it fill up and close. No tables, no blocks: one DLL into `RockWeb/Bin`, config-only seed migrations create fifteen inactive starter event types with working templates, and the components appear in the Event Type dropdown.
 
 Core v19 ships exactly eight event components. Nothing in this pack duplicates one.
 
@@ -18,9 +18,10 @@ Follow affordances are all native: person and group detail pages have follow sta
 |---|---|---|
 | Person | Date Attribute Anniversary | Annual recurrence on any Person date attribute. Sobriety date, salvation date, whatever you track. |
 | Person | Milestone Birthday | Birthday with the Nth Year multiplier core Birthday lacks. |
-| Person | Serving Anniversary | Annual recurrence on first-join date for a group type. |
+| Person | Serving Anniversary | Annual recurrence on the earliest first-join date across one or more group types. |
 | Person | Data View Match | Any persisted Data View becomes a following event. |
-| Person | Left Group of Type | Membership went inactive or archived. |
+| Person | Left Group of Type | Membership in any chosen group type went inactive or archived. |
+| Person | Stopped Attending Group Type(s) | Had been attending, now has not for N days. |
 | Person | Entered Connection Opportunity | A connection request was created. |
 | Person | Connection Request Connected | A request reached Connected. Once ever. |
 | Group | Member Added | Someone joined the group you follow. |

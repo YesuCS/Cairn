@@ -41,6 +41,9 @@ namespace com.yesuchum.Cairn.FollowingEvents.SystemGuid
         public const string GROUP_ATTENDANCE_NOT_ENTERED = "CFD0F724-D7E9-477A-A740-AA89E3E0DE6E";
         public const string GROUP_INACTIVATED = "C8D8ABE2-BA87-4E94-865E-05FEF6D205A3";
 
+        // v1.0.1
+        public const string PERSON_STOPPED_ATTENDING_GROUP_TYPE = "AE46FA16-9231-4E72-9CCD-03148546BC23";
+
         // Phase 5 — Registration
         public const string REGISTRATION_NEW_REGISTRATION = "D7C6BA5F-F608-4DDE-9C31-638713A59E4E";
         public const string REGISTRATION_NEARING_CAPACITY = "FBE51E66-0B71-4B0D-879C-0FA1B0430F78";

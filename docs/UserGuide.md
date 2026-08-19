@@ -33,15 +33,17 @@ One component can back many event types. "Sobriety Anniversary" and "Salvation A
 
 **Milestone Birthday.** Core Birthday, plus the Nth Year multiplier it lacks. Set Nth Year to 10 and you hear about 10th, 20th, 30th birthdays. `Years` in the template is the age they are turning.
 
-**Serving Anniversary.** Annual recurrence on the date the person first joined a group of the configured type. Point it at your serve-team group type and you get serving anniversaries. Active Members Only (default on) ignores memberships that have since gone inactive.
+**Serving Anniversary.** Annual recurrence on the earliest date the person first joined a group of the configured type(s) — pick one group type or several. Active Members Only (default on) ignores memberships that have since gone inactive.
 
 **Data View Match.** The person is in the configured Data View's result set. The Data View must be persisted — the component reads the persisted values and never runs the view live, so follower-scale evaluation stays cheap. Rock stores no "entered the data view" date, so this fires on current membership with a Re-notify Days interval; 0 means once ever per follow.
 
-**Left Group of Type.** A membership in the configured group type went inactive or was archived inside the window. **Only If No Remaining Membership** (default on) stays quiet while the person still has another active group of that type — moving between small groups is not leaving small groups. Hard-deleted memberships leave no signal and are not detected; archive or inactivate instead of delete if you want this event to see it.
+**Left Group of Type.** A membership in any of the configured group type(s) went inactive or was archived inside the window. **Only If No Remaining Membership** (default on) stays quiet while the person still has another active group of that type — moving between small groups is not leaving small groups. Hard-deleted memberships leave no signal and are not detected; archive or inactivate instead of delete if you want this event to see it.
 
 **Entered Connection Opportunity.** A connection request was created for the person, matching a specific opportunity or a whole connection type (configure one of the two; the opportunity wins if both are set).
 
 **Connection Request Connected.** A request reached Connected. Fires once ever per follow.
+
+**Stopped Attending Group Type(s).** (v1.0.1) A person who had been attending groups of the chosen type(s) has no attendance for Days Without Attendance (default 30). Someone who never attended is not a lapse and never fires. Re-notify Days (default 0 = once ever) keeps the reminder coming while the lapse continues.
 
 ### Group components
 
@@ -82,6 +84,7 @@ Every component hands the template ready merge objects — no date math in Lava.
 | Left Group of Type | `EventData` (per exit) | `SourceName`, `GroupName`, `ExitDateTime` |
 | Entered Connection Opportunity | `EventData` (per request) | `SourceName`, `RequestState`, `ConnectorName`, `RequestDateTime` |
 | Connection Request Connected | `EventData` (per request) | `SourceName`, `ConnectorName`, `ConnectedDateTime` |
+| Stopped Attending Group Type(s) | `EventData` | `SourceName`, `GroupName`, `LastAttendedDateTime`, `DaysSinceAttended` |
 | Member Added | `MemberData` (per member) | `MemberName`, `RoleName`, `AddedDateTime` |
 | Member Removed | `MemberData` (per member) | `MemberName`, `RoleName`, `ExitDateTime` |
 | Attendance Not Entered | `OccurrenceData` (per occurrence) | `OccurrenceDate`, `ScheduleName` |
