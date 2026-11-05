@@ -1,6 +1,12 @@
 # Cairn Uninstall Guide
 
-Cairn ships no tables, no pages, no blocks, and no jobs — just components and one config-only seed migration — so uninstall is short. The package carries full uninstall support (`uninstall/deletefile.lst` plus `uninstall/run.sql` doing exactly the steps below), for when the Rock Shop client executes it; until then, the manual pass:
+Cairn ships no tables, no pages, no blocks, and no jobs, only components and config-only seed migrations, so uninstall is short.
+
+## Uninstalling or downgrading through Rock
+
+Rock doesn't support uninstalling or downgrading plugins yet. The Rock Shop can install a plugin and update it to a newer version, but at the time this was written (November 2026) there's no way to remove a plugin or roll it back to an older version from inside Rock.
+
+Cairn is ready for when Spark adds that. The package ships an `uninstall` folder with the file list and a `run.sql` that does the SQL in step 1, and its migrations have a `Down()`, so Rock will have what it needs once it can do this on its own. Until then, uninstalling is the manual process below, and downgrading means uninstalling and then installing the older version by hand.
 
 ## 1. Remove the event types
 

@@ -8,12 +8,27 @@ Notifications ride Rock's existing **Send Following Events** job and its daily d
 
 ## Install
 
-Install **Cairn** from the Rock Shop (Admin Tools > Rock Shop) like any other plugin; Rock restarts and everything below happens automatically.
+There are two ways to install Cairn: from the Rock Shop, or by hand on the server Rock runs on. Rock doesn't have a page for uploading a `.plugin` file, so a manual install happens on the server, not in the browser.
 
-Installing outside the shop (staging boxes, air-gapped instances) is one file:
+### From the Rock Shop
 
-1. Copy `com.yesuchum.Cairn.FollowingEvents.dll` into `RockWeb\Bin`.
-2. Recycle the application pool.
+1. Go to **Admin Tools > Rock Shop** and search for `Cairn`.
+2. Open the package and click **Install**.
+3. Rock restarts after the install, and the plugin migration runs on that restart.
+
+### Manual install on the server
+
+Use this when the Rock Shop isn't an option, like a staging box or an instance without internet access. You need the `.plugin` file and access to the machine hosting Rock (the VM or server running IIS).
+
+1. A `.plugin` file is a zip. Copy it to the server, change the extension to `.zip`, and extract it.
+2. In IIS Manager, stop the Rock application pool.
+3. Copy everything inside the package's `content` folder into the Rock web root, the folder the Rock site points to in IIS (the one with `web.config` and `Bin` in it), and merge it with the folders already there. When you're done, these should exist:
+   ```
+   Bin\com.yesuchum.Cairn.FollowingEvents.dll
+   ```
+4. Start the application pool. The plugin migration runs on startup.
+
+Only the `content` folder gets copied. Anything else in the package is for the Rock Shop, and none of it needs to run by hand. A manual install doesn't show up in the Rock Shop's list of installed plugins, so updates go the same way: stop the app pool, copy the new version's `content` files over the old ones, and start it again.
 
 Either way, open **Admin Tools > System Settings > Following Events** afterward. The Cairn components are in the Event Type dropdown when you add a new event type; every one ends in `(cairn plugin)`.
 
